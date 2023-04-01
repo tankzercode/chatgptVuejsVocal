@@ -1,26 +1,48 @@
 <template>
   <div id="app">
-
-
-<button @click="speak">speak</button>
-
+    <button @click="listen">speak</button>
   </div>
 </template>
 
 <script>
+const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const synth = window.speechSynthesis;
 
 export default {
-  name: 'App',
-  components: {
-    
+  name: "App",
+  components: {},
+
+  data() {
+    return {
+      recognition: recognition,
+      reco: "",
+      parole: "",
+      text: "",
+      voices: synth.getVoices(),
+    };
+  },
+  methods: {
+    listen() {
+      this.reco.start();
+
+      this.reco.onresult = (event) => {
+        const color = event.results[0][0].transcript;
+        this.text = color;
+        console.log(this.text);
+
+        let utterance = new SpeechSynthesisUtterance(this.text);
+        synth.speak(utterance);
+      };
+    },
   },
 
-  methods : {
-speak() {
-  console.log("ok")
-}
-  }
-}
+  mounted() {
+    console.log(this.recognition);
+    this.reco = new recognition();
+
+    this.parole = synth;
+  },
+};
 </script>
 
 <style>
